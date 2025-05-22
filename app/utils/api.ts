@@ -25,6 +25,5 @@ export async function searchMovies(query: string): Promise<MovieSummary[]> {
   const res = await api.get('/search/movie', {
     params: { query },
   });
-  console.log({ res: res.data.results });
   return res.data.results as MovieSummary[];
 }
