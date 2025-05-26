@@ -1,4 +1,16 @@
+import Search from '~/components/search';
+import { searchMovies, type MovieSummary } from '../utils/api';
+import { useState } from 'react';
+import List, { type ListItem } from '~/components/list';
+import { normalizeMovieResults } from '~/utils/normalizeMovieResults';
+
 const Hub = () => {
+  const [results, setResults] = useState<ListItem[]>([]);
+
+  const handleResults = (rawResults: MovieSummary[]) => {
+    setResults(normalizeMovieResults(rawResults));
+  };
+
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
@@ -10,6 +22,15 @@ const Hub = () => {
         </header>
         <div className="max-w-[300px] w-full space-y-6 px-4">
           <p>Hold your horses, amigo.</p>
+        </div>
+        <div>
+          <Search
+            placeholder="Search movies..."
+            timeoutDelay={500}
+            handleSearch={searchMovies}
+            handleResults={handleResults}
+          />
+          <List data={results} />
         </div>
       </div>
     </main>
