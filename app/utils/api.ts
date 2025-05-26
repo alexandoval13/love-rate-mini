@@ -15,10 +15,10 @@ export const api = axios.create({
 export interface MovieSummary {
   id: number;
   title: string;
-  release_date: string;
-  poster_path: string;
-  overview: string;
-  vote_average: number;
+  release_date?: string;
+  poster_path?: string;
+  overview?: string;
+  vote_average?: number;
 }
 
 export async function searchMovies(query: string): Promise<MovieSummary[]> {
