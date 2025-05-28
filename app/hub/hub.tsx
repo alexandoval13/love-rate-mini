@@ -1,15 +1,19 @@
 import Search from '~/components/search';
-import { searchMovies, type MovieSummary } from '../utils/api';
-import { useState } from 'react';
+import { searchMovies, type MovieSummary } from '../api/tmdb_api';
+import { useCallback, useState } from 'react';
 import List, { type ListItem } from '~/components/list';
 import { normalizeMovieResults } from '~/utils/normalizeMovieResults';
 
 const Hub = () => {
   const [results, setResults] = useState<ListItem[]>([]);
 
-  const handleResults = (rawResults: MovieSummary[]) => {
-    setResults(normalizeMovieResults(rawResults));
-  };
+  const handleResults = useCallback(
+    () => (rawResults: MovieSummary[]) => {
+      console.log('handling results');
+      setResults(normalizeMovieResults(rawResults));
+    },
+    []
+  );
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
