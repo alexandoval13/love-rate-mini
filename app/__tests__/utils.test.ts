@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import type { MovieSummary } from '~/utils/api';
+import type { MovieSummary } from '~/api/tmdb_api';
 import { normalizeMovieResults } from '~/utils/normalizeMovieResults';
 
 describe('Utility functions', () => {

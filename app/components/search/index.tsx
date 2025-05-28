@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 type SearchPropsType = {
+  ariaLabel?: string;
   placeholder?: string;
   timeoutDelay?: number;
   handleSearch: (value: string) => any;
@@ -9,6 +10,7 @@ type SearchPropsType = {
 
 const Search = (props: SearchPropsType) => {
   const {
+    ariaLabel,
     placeholder,
     timeoutDelay = 300,
     handleSearch,
@@ -18,6 +20,11 @@ const Search = (props: SearchPropsType) => {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
+    if (!query) {
+      handleResults([]);
+      return;
+    }
+
     const delay = setTimeout(() => {
       handleSearch(query).then(handleResults).catch(console.error);
     }, timeoutDelay);
@@ -29,6 +36,7 @@ const Search = (props: SearchPropsType) => {
     <div>
       <input
         type="text"
+        aria-label={ariaLabel || 'Search'}
         placeholder={placeholder || 'Search...'}
         value={query}
         onChange={(e) => setQuery(e.target.value)}

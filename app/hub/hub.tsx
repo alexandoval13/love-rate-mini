@@ -29,8 +29,8 @@ const Hub = () => {
         </div>
         <div>
           <Search
+            ariaLabel="Search movies"
             placeholder="Search movies..."
-            timeoutDelay={500}
             handleSearch={searchMovies}
             handleResults={handleResults}
           />

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { searchMovies, api } from '../utils/api';
+import { searchMovies, api } from '../api/tmdb_api';
 
 describe('searchMovies', () => {
   beforeEach(() => {
