@@ -7,13 +7,9 @@ import { normalizeMovieResults } from '~/utils/normalizeMovieResults';
 const Hub = () => {
   const [results, setResults] = useState<ListItem[]>([]);
 
-  const handleResults = useCallback(
-    () => (rawResults: MovieSummary[]) => {
-      console.log('handling results');
-      setResults(normalizeMovieResults(rawResults));
-    },
-    []
-  );
+  const handleResults = useCallback((rawResults: MovieSummary[]) => {
+    setResults(normalizeMovieResults(rawResults));
+  }, []);
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
