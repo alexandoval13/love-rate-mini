@@ -1,13 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import { Welcome } from '../welcome/welcome';
 import { describe, expect, it } from 'vitest';
+import Hub from '../hub/hub';
 
-describe('Welcome', () => {
+describe('Home', () => {
   it('renders the homepage text', () => {
     render(
       <MemoryRouter>
-        <Welcome />
+        <Hub />
       </MemoryRouter>
     );
     expect(screen.getByText(/love\/rate/i)).toBeInTheDocument();
