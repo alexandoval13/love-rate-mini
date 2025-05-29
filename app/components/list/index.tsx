@@ -7,15 +7,20 @@ export type ListItem = {
 
 export type ListPropsType = {
   data: ListItem[];
-  handleSelect?: () => void;
+  handleSelect?: (id: string | number) => void;
 };
 
 const List = (props: ListPropsType) => {
-  const { data } = props;
+  const { data, handleSelect } = props;
+
+  const handleClick = (val: ListItem) => {
+    if (handleSelect) handleSelect(val.id);
+  };
+
   return (
     <ul>
       {data.map((item) => (
-        <li key={item.id}>
+        <li key={item.id} role="button" onClick={() => handleClick(item)}>
           {item.label} ({item.date})
         </li>
       ))}
