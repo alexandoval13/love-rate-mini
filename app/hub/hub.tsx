@@ -1,7 +1,7 @@
-import Search from '~/components/search';
-import { searchMovies, type MovieSummary } from '../api/tmdb_api';
 import { useCallback, useState } from 'react';
+import Search from '~/components/search';
 import List, { type ListItem } from '~/components/list';
+import { searchMovies, type MovieSummary } from '../api/tmdb_api';
 import { normalizeMovieResults } from '~/utils/normalizeMovieResults';
 
 const Hub = () => {
