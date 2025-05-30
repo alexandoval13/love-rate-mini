@@ -77,9 +77,15 @@ export async function searchMovies(query: string): Promise<MovieSummary[]> {
   return res.data.results as MovieSummary[];
 }
 
-export async function searchMovieById(
-  id: string | number
-): Promise<MovieDetails> {
+export async function fetchMovieById(id: string): Promise<MovieDetails> {
   const res = await api.get(`/movie/${id}`);
   return res.data;
+}
+
+export async function fetchMoviesByIdList(
+  ids: string[]
+): Promise<MovieDetails[]> {
+  const promises = ids.map((id) => api.get(`/movie/${id}`));
+  const responses = await Promise.all(promises);
+  return responses.map((res) => res.data as MovieDetails);
 }

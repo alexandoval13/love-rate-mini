@@ -1,35 +1,86 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Search from '~/components/search';
 import List, { type ListItem } from '~/components/list';
 import {
-  searchMovieById,
+  fetchMovieById,
+  fetchMoviesByIdList,
   searchMovies,
   type MovieDetails,
   type MovieSummary,
 } from '../api/tmdb_api';
-import {
-  normalizeMovieResults,
-  normalizeMovieSelection,
-} from '~/utils/normalizeMovieResults';
+import { normalizeMovieResults } from '~/utils/normalizeMovieResults';
+import { lsMovieListKey } from '~/utils/consts';
 
 const Hub = () => {
-  const [results, setResults] = useState<ListItem[]>([]);
-  // temporary state management for my movies
-  const [myMovieList, setMyMovieList] = useState<ListItem[]>([]);
+  const [searchResults, setSearchResults] = useState<ListItem[]>([]);
+  const [storedMovieIds, setStoredMovieIds] = useState<string[]>([]);
+  const [savedMovies, setSavedMovies] = useState<ListItem[]>([]);
 
-  const handleResults = useCallback((rawResults: MovieSummary[]) => {
-    setResults(normalizeMovieResults(rawResults));
+  // Normalize search results and update state
+  const handleSearchResults = useCallback((rawResults: MovieSummary[]) => {
+    setSearchResults(normalizeMovieResults(rawResults));
   }, []);
 
-  const addMovie = (rawMovie: MovieDetails) => {
-    setMyMovieList([...myMovieList, normalizeMovieSelection(rawMovie)]);
+  // Normalize and set saved movie data
+  const updateSavedMovies = useCallback((rawMovies: MovieDetails[]) => {
+    const normalized = normalizeMovieResults(rawMovies);
+    setSavedMovies(normalized);
+  }, []);
+
+  const handleSelectMovie = async (movieId: string) => {
+    if (storedMovieIds.includes(movieId)) return;
+
+    try {
+      const movie = await fetchMovieById(movieId);
+      const normalized = normalizeMovieResults([movie])[0];
+
+      const alreadySaved = savedMovies.some((m) => m.id === normalized.id);
+      if (alreadySaved) return;
+
+      const updatedIds = [...storedMovieIds, movieId];
+      const updatedMovies = [...savedMovies, normalized];
+
+      setStoredMovieIds(updatedIds);
+      setSavedMovies(updatedMovies);
+      localStorage.setItem(lsMovieListKey, JSON.stringify(updatedIds));
+    } catch (err) {
+      console.error('Failed to fetch and add movie:', err);
+    }
   };
 
-  const handleSelectMovie = (movieId: string | number) => {
-    const movie = searchMovieById(movieId)
-      .then(addMovie)
-      .catch((err) => console.log(err));
-  };
+  // Load stored movie IDs on mount
+  useEffect(() => {
+    const loadStoredMovies = async () => {
+      try {
+        const raw = localStorage.getItem(lsMovieListKey);
+        if (!raw) return;
+
+        const ids: string[] = JSON.parse(raw);
+        if (!Array.isArray(ids) || ids.length === 0) return;
+
+        const movies = await fetchMoviesByIdList(ids);
+        const normalized = normalizeMovieResults(movies);
+
+        setStoredMovieIds(ids);
+        setSavedMovies(normalized);
+      } catch (err) {
+        console.error('Error loading saved movies:', err);
+        setStoredMovieIds([]);
+        setSavedMovies([]);
+      }
+    };
+
+    loadStoredMovies();
+  }, []);
+
+  // When storedMovieIds updates, fetch movie details
+  useEffect(() => {
+    if (!storedMovieIds.length) return;
+
+    fetchMoviesByIdList(storedMovieIds)
+      .then(updateSavedMovies)
+      .catch((err) => console.error('Failed to fetch movie list:', err));
+  }, []);
 
   return (
     <main className="flex items-center justify-center pt-16 pb-4">
@@ -43,23 +94,23 @@ const Hub = () => {
         <div className="max-w-[300px] w-full space-y-6 px-4">
           <p>Hold your horses, amigo.</p>
         </div>
-        <div>
-          <p>My movies</p>
-          {myMovieList.length ? (
-            <List data={myMovieList} />
+        <section>
+          <p className="font-medium">My Movies</p>
+          {savedMovies.length ? (
+            <List data={savedMovies} />
           ) : (
             <p>No movies yet...</p>
           )}
-        </div>
-        <div>
+        </section>
+        <section>
           <Search
             ariaLabel="Search movies"
             placeholder="Search movies..."
             handleSearch={searchMovies}
-            handleResults={handleResults}
+            handleResults={handleSearchResults}
           />
-          <List data={results} handleSelect={handleSelectMovie} />
-        </div>
+          <List data={searchResults} handleSelect={handleSelectMovie} />
+        </section>
       </div>
     </main>
   );

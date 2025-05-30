@@ -1,5 +1,5 @@
 export type ListItem = {
-  id: number | string;
+  id: string;
   label: string;
   date?: string;
   image?: string;
@@ -7,7 +7,7 @@ export type ListItem = {
 
 export type ListPropsType = {
   data: ListItem[];
-  handleSelect?: (id: string | number) => void;
+  handleSelect?: (id: string) => void;
 };
 
 const List = (props: ListPropsType) => {
@@ -20,8 +20,12 @@ const List = (props: ListPropsType) => {
   return (
     <ul>
       {data.map((item) => (
-        <li key={item.id} role="button" onClick={() => handleClick(item)}>
-          {item.label} ({item.date})
+        <li
+          key={item.id}
+          role={handleSelect && 'button'}
+          onClick={() => handleClick(item)}
+        >
+          {item.label} {item.date}
         </li>
       ))}
     </ul>

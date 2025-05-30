@@ -5,11 +5,12 @@ import List from '~/components/list';
 
 describe('List component', () => {
   const mockData: ListItem[] = [
-    { id: 1, label: 'Terminator', date: '1990' },
-    { id: 2, label: 'Predator', date: '1989' },
-    { id: 3, label: 'Princess Bride', date: '1994' },
-    { id: 5, label: 'Rambo', date: '1988' },
+    { id: '1', label: 'Terminator', date: '1990' },
+    { id: '2', label: 'Predator', date: '1989' },
+    { id: '3', label: 'Princess Bride', date: '1994' },
+    { id: '5', label: 'Rambo', date: '1988' },
   ];
+  const handleSelect = vi.fn();
 
   it('renders a list of items', () => {
     render(<List data={mockData} />);
@@ -22,6 +23,12 @@ describe('List component', () => {
     render(<List data={mockData} />);
 
     expect(screen.getAllByRole('listitem')).toHaveLength(mockData.length);
+  });
+
+  it('renders all list items with button role when handleSelect fn passed in', () => {
+    render(<List data={mockData} handleSelect={handleSelect} />);
+
+    expect(screen.getAllByRole('button')).toHaveLength(mockData.length);
   });
 
   it('handles empty lists', () => {

@@ -43,7 +43,7 @@ describe('Utility functions', () => {
       ];
       const expected = [
         {
-          id: 2,
+          id: '2',
           label: 'Oppenheimer',
           date: '04-21-2020',
           image: 'oppenheimer.jpg',
@@ -63,7 +63,7 @@ describe('Utility functions', () => {
       ];
       const expected = [
         {
-          id: 2,
+          id: '2',
           label: 'Oppenheimer',
           date: 'Unknown',
           image: undefined,
