@@ -5,7 +5,6 @@ import {
   fetchMovieById,
   fetchMoviesByIdList,
   searchMovies,
-  type MovieDetails,
   type MovieSummary,
 } from '../api/tmdb_api';
 import { normalizeMovieResults } from '~/utils/normalizeMovieResults';
@@ -21,25 +20,21 @@ const Hub = () => {
     setSearchResults(normalizeMovieResults(rawResults));
   }, []);
 
-  // Normalize and set saved movie data
-  const updateSavedMovies = useCallback((rawMovies: MovieDetails[]) => {
-    const normalized = normalizeMovieResults(rawMovies);
-    setSavedMovies(normalized);
-  }, []);
-
   const handleSelectMovie = async (movieId: string) => {
+    // prevent duplicate adds
     if (storedMovieIds.includes(movieId)) return;
 
     try {
       const movie = await fetchMovieById(movieId);
-      const normalized = normalizeMovieResults([movie])[0];
+      const normalizedMovie = normalizeMovieResults([movie])[0];
 
-      const alreadySaved = savedMovies.some((m) => m.id === normalized.id);
+      const alreadySaved = savedMovies.some((m) => m.id === normalizedMovie.id);
       if (alreadySaved) return;
 
       const updatedIds = [...storedMovieIds, movieId];
-      const updatedMovies = [...savedMovies, normalized];
+      const updatedMovies = [...savedMovies, normalizedMovie];
 
+      // update state and local storage with the same data
       setStoredMovieIds(updatedIds);
       setSavedMovies(updatedMovies);
       localStorage.setItem(lsMovieListKey, JSON.stringify(updatedIds));
